@@ -1,7 +1,7 @@
 import { useAuth } from "@/_core/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Loader2, Play, Trophy, History } from "lucide-react";
+import { Loader2, Play, Trophy, History, ShoppingBag } from "lucide-react";
 import { APP_LOGO, APP_TITLE, getLoginUrl } from "@/const";
 import { trpc } from "@/lib/trpc";
 import { Link } from "wouter";
@@ -129,7 +129,7 @@ export default function Home() {
             <p className="text-muted-foreground">เลือกเมนูด้านล่างเพื่อเริ่มเล่น</p>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-6">
+          <div className="grid md:grid-cols-3 gap-6">
             <Card className="hover:shadow-lg transition-shadow">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-2xl">
@@ -160,6 +160,23 @@ export default function Home() {
               <CardContent>
                 <Button size="lg" variant="outline" className="w-full" asChild>
                   <Link href="/history">ดูประวัติ</Link>
+                </Button>
+              </CardContent>
+            </Card>
+
+            <Card className="hover:shadow-lg transition-shadow border-secondary">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-2xl">
+                  <ShoppingBag className="h-6 w-6 text-secondary" />
+                  ร้านค้า
+                </CardTitle>
+                <CardDescription>
+                  ซื้อธีมกระดานและสนับสนุนผู้พัฒนา
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Button size="lg" variant="secondary" className="w-full" asChild>
+                  <Link href="/shop">ไปร้านค้า</Link>
                 </Button>
               </CardContent>
             </Card>

@@ -1,10 +1,18 @@
 import { useEffect, useState } from "react";
 import { useRoute, useLocation } from "wouter";
+import { useAuth } from "@/_core/hooks/useAuth";
 import { trpc } from "@/lib/trpc";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Loader2, Home, RotateCcw } from "lucide-react";
+import { Loader2, Home, RotateCcw, Palette } from "lucide-react";
 import { toast } from "sonner";
+import { useBoardTheme, getThemeColors } from "@/contexts/BoardThemeContext";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 interface Tile {
   letter: string;
@@ -26,9 +34,20 @@ interface Position {
 }
 
 export default function Game() {
+  const { user, loading: authLoading, isAuthenticated } = useAuth();
+  const { theme, setTheme, availableThemes, isThemeUnlocked } = useBoardTheme();
+  const themeColors = getThemeColors(theme);
   const [, params] = useRoute("/game/:id");
   const [, setLocation] = useLocation();
   const gameId = params?.id === "new" ? null : Number(params?.id);
+
+  // Redirect to home if not authenticated
+  useEffect(() => {
+    if (!authLoading && !isAuthenticated) {
+      toast.error("กรุณาเข้าสู่ระบบก่อนเล่นเกม");
+      setLocation("/");
+    }
+  }, [authLoading, isAuthenticated, setLocation]);
 
   const [selectedTiles, setSelectedTiles] = useState<number[]>([]);
   const [placedPositions, setPlacedPositions] = useState<Position[]>([]);
@@ -152,25 +171,25 @@ export default function Game() {
   };
 
   const getCellClass = (cell: BoardCell, row: number, col: number) => {
-    const classes = ['scrabble-cell'];
+    let cellClass = `scrabble-cell ${themeColors.cell}`;
     
     if (cell.letter) {
-      classes.push('has-letter');
+      cellClass += ` ${themeColors.tile}`;
     } else {
       if (row === 7 && col === 7) {
-        classes.push('center');
+        cellClass += ` ${themeColors.center}`;
       } else if (cell.multiplier.type === 'word' && cell.multiplier.value === 3) {
-        classes.push('multiplier-word-3');
+        cellClass += ` ${themeColors.triple_word}`;
       } else if (cell.multiplier.type === 'word' && cell.multiplier.value === 2) {
-        classes.push('multiplier-word-2');
+        cellClass += ` ${themeColors.double_word}`;
       } else if (cell.multiplier.type === 'letter' && cell.multiplier.value === 3) {
-        classes.push('multiplier-letter-3');
+        cellClass += ` ${themeColors.triple_letter}`;
       } else if (cell.multiplier.type === 'letter' && cell.multiplier.value === 2) {
-        classes.push('multiplier-letter-2');
+        cellClass += ` ${themeColors.double_letter}`;
       }
     }
 
-    return classes.join(' ');
+    return cellClass;
   };
 
   const getCellContent = (cell: BoardCell, row: number, col: number) => {
@@ -226,10 +245,43 @@ export default function Game() {
     <div className="min-h-screen bg-background">
       <header className="border-b bg-card sticky top-0 z-10">
         <div className="container py-3 flex items-center justify-between">
-          <Button variant="ghost" size="sm" onClick={() => setLocation("/")}>
-            <Home className="h-4 w-4 mr-2" />
-            หน้าหลัก
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button variant="ghost" size="sm" onClick={() => setLocation("/")}>
+              <Home className="h-4 w-4 mr-2" />
+              หน้าหลัก
+            </Button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="sm">
+                  <Palette className="h-4 w-4 mr-2" />
+                  ธีม
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                {availableThemes.map((t) => (
+                  <DropdownMenuItem
+                    key={t}
+                    onClick={() => {
+                      if (isThemeUnlocked(t)) {
+                        setTheme(t);
+                        toast.success(`เปลี่ยนเป็นธีม ${t === 'default' ? 'ปกติ' : t}`);
+                      } else {
+                        toast.error('กรุณาซื้อธีมนี้ที่ร้านค้า');
+                      }
+                    }}
+                    disabled={!isThemeUnlocked(t)}
+                  >
+                    {t === 'default' && '🎨 ธีมปกติ'}
+                    {t === 'classic' && '🌲 ธีมคลาสสิก'}
+                    {t === 'gold' && '✨ ธีมทอง'}
+                    {t === 'rainbow' && '🌈 ธีมสีรุ้ง'}
+                    {theme === t && ' ✓'}
+                    {!isThemeUnlocked(t) && ' 🔒'}
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
           <div className="flex items-center gap-4 text-sm">
             <div className="flex items-center gap-2">
               <span className="font-semibold">คุณ:</span>
@@ -287,7 +339,7 @@ export default function Game() {
         )}
 
         <div className="flex justify-center">
-          <div className="scrabble-board max-w-2xl w-full">
+          <div className={`scrabble-board max-w-2xl w-full ${themeColors.board} p-4 rounded-lg shadow-xl`}>
             {game.boardState.map((row: BoardCell[], rowIndex: number) =>
               row.map((cell: BoardCell, colIndex: number) => (
                 <div

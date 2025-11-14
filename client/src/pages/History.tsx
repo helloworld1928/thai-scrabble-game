@@ -3,11 +3,23 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Loader2, Home, Trophy, Calendar } from "lucide-react";
 import { useLocation } from "wouter";
+import { useAuth } from "@/_core/hooks/useAuth";
+import { useEffect } from "react";
+import { toast } from "sonner";
 
 export default function History() {
+  const { user, loading: authLoading, isAuthenticated } = useAuth();
   const [, setLocation] = useLocation();
-  const { data: games, isLoading } = trpc.game.list.useQuery();
-  const stats = trpc.stats.get.useQuery();
+  const { data: games, isLoading } = trpc.game.list.useQuery(undefined, { enabled: isAuthenticated });
+  const stats = trpc.stats.get.useQuery(undefined, { enabled: isAuthenticated });
+
+  // Redirect to home if not authenticated
+  useEffect(() => {
+    if (!authLoading && !isAuthenticated) {
+      toast.error("กรุณาเข้าสู่ระบบก่อนดูประวัติ");
+      setLocation("/");
+    }
+  }, [authLoading, isAuthenticated, setLocation]);
 
   if (isLoading) {
     return (

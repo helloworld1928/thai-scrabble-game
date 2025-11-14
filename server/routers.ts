@@ -4,6 +4,7 @@ import { systemRouter } from "./_core/systemRouter";
 import { publicProcedure, protectedProcedure, router } from "./_core/trpc";
 import { z } from "zod";
 import * as db from "./db";
+import { notificationRouter } from "./notificationRouter";
 import { 
   createEmptyBoard, 
   createTileBag, 
@@ -418,6 +419,103 @@ export const appRouter = router({
         averageScore: 0,
       };
     }),
+  }),
+
+  // Notifications
+  notification: notificationRouter,
+
+  // Payment & Purchases
+  payment: router({
+    // สร้าง checkout session
+    createCheckout: protectedProcedure
+      .input(z.object({ productId: z.string() }))
+      .mutation(async ({ input, ctx }) => {
+        const { stripe } = await import('./stripe');
+        const { getProduct } = await import('../shared/products');
+        const { createPurchase, getUserStripeCustomerId } = await import('./purchaseDb');
+        
+        const product = getProduct(input.productId);
+        if (!product) {
+          throw new Error('ไม่พบสินค้า');
+        }
+        
+        // ตรวจสอบว่าซื้อแล้วหรือยัง
+        const { hasUserPurchased } = await import('./purchaseDb');
+        if (product.type === 'theme') {
+          const purchased = await hasUserPurchased(ctx.user.id, input.productId);
+          if (purchased) {
+            throw new Error('คุณซื้อธีมนี้ไปแล้ว');
+          }
+        }
+        
+        // สร้าง checkout session
+        const origin = ctx.req.headers.origin || `http://localhost:3000`;
+        
+        const sessionParams: any = {
+          payment_method_types: ['card', 'promptpay'],
+          line_items: [
+            {
+              price_data: {
+                currency: product.currency,
+                product_data: {
+                  name: product.name,
+                  description: product.description,
+                },
+                unit_amount: product.price * 100, // แปลงเป็นสตางค์
+              },
+              quantity: 1,
+            },
+          ],
+          mode: 'payment',
+          success_url: `${origin}/?payment=success`,
+          cancel_url: `${origin}/?payment=cancel`,
+          client_reference_id: ctx.user.id.toString(),
+          customer_email: ctx.user.email || undefined,
+          metadata: {
+            user_id: ctx.user.id.toString(),
+            product_id: product.id,
+            customer_name: ctx.user.name || '',
+          },
+          allow_promotion_codes: true,
+        };
+        
+        // ใช้ existing customer ถ้ามี
+        const existingCustomerId = await getUserStripeCustomerId(ctx.user.id);
+        if (existingCustomerId) {
+          sessionParams.customer = existingCustomerId;
+        }
+        
+        const session = await stripe.checkout.sessions.create(sessionParams);
+        
+        // บันทึกการซื้อ
+        await createPurchase({
+          userId: ctx.user.id,
+          productId: product.id,
+          productName: product.name,
+          amount: product.price * 100,
+          currency: product.currency,
+          stripeSessionId: session.id,
+          status: 'pending',
+        });
+        
+        return { url: session.url };
+      }),
+    
+    // ดูประวัติการซื้อ
+    myPurchases: protectedProcedure.query(async ({ ctx }) => {
+      const { getUserPurchases } = await import('./purchaseDb');
+      const purchases = await getUserPurchases(ctx.user.id);
+      return purchases;
+    }),
+    
+    // ตรวจสอบว่าซื้อแล้วหรือยัง
+    hasPurchased: protectedProcedure
+      .input(z.object({ productId: z.string() }))
+      .query(async ({ input, ctx }) => {
+        const { hasUserPurchased } = await import('./purchaseDb');
+        const purchased = await hasUserPurchased(ctx.user.id, input.productId);
+        return { purchased };
+      }),
   }),
 });
 
