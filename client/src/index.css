@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap');
 @import "tailwindcss";
 @import "tw-animate-css";
 
@@ -43,39 +44,39 @@
 }
 
 :root {
-  --primary: var(--color-blue-700);
-  --primary-foreground: var(--color-blue-50);
-  --sidebar-primary: var(--color-blue-600);
-  --sidebar-primary-foreground: var(--color-blue-50);
+  --primary: oklch(0.5 0.15 140);
+  --primary-foreground: oklch(0.98 0 0);
+  --sidebar-primary: oklch(0.5 0.15 140);
+  --sidebar-primary-foreground: oklch(0.98 0 0);
   --chart-1: var(--color-blue-300);
   --chart-2: var(--color-blue-500);
   --chart-3: var(--color-blue-600);
   --chart-4: var(--color-blue-700);
   --chart-5: var(--color-blue-800);
   --radius: 0.65rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.235 0.015 65);
+  --background: oklch(0.96 0.01 140);
+  --foreground: oklch(0.2 0.02 140);
   --card: oklch(1 0 0);
-  --card-foreground: oklch(0.235 0.015 65);
+  --card-foreground: oklch(0.2 0.02 140);
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.235 0.015 65);
-  --secondary: oklch(0.98 0.001 286.375);
-  --secondary-foreground: oklch(0.4 0.015 65);
-  --muted: oklch(0.967 0.001 286.375);
-  --muted-foreground: oklch(0.552 0.016 285.938);
-  --accent: oklch(0.967 0.001 286.375);
-  --accent-foreground: oklch(0.141 0.005 285.823);
+  --popover-foreground: oklch(0.2 0.02 140);
+  --secondary: oklch(0.75 0.12 40);
+  --secondary-foreground: oklch(0.15 0.02 40);
+  --muted: oklch(0.92 0.01 140);
+  --muted-foreground: oklch(0.45 0.02 140);
+  --accent: oklch(0.6 0.12 200);
+  --accent-foreground: oklch(0.98 0 0);
   --destructive: oklch(0.577 0.245 27.325);
   --destructive-foreground: oklch(0.985 0 0);
-  --border: oklch(0.92 0.004 286.32);
-  --input: oklch(0.92 0.004 286.32);
-  --ring: oklch(0.623 0.214 259.815);
+  --border: oklch(0.88 0.01 140);
+  --input: oklch(0.88 0.01 140);
+  --ring: oklch(0.5 0.15 140);
   --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.235 0.015 65);
-  --sidebar-accent: oklch(0.967 0.001 286.375);
-  --sidebar-accent-foreground: oklch(0.141 0.005 285.823);
-  --sidebar-border: oklch(0.92 0.004 286.32);
-  --sidebar-ring: oklch(0.623 0.214 259.815);
+  --sidebar-foreground: oklch(0.2 0.02 140);
+  --sidebar-accent: oklch(0.92 0.01 140);
+  --sidebar-accent-foreground: oklch(0.2 0.02 140);
+  --sidebar-border: oklch(0.88 0.01 140);
+  --sidebar-ring: oklch(0.5 0.15 140);
 }
 
 .dark {
@@ -119,6 +120,7 @@
   }
   body {
     @apply bg-background text-foreground;
+    font-family: 'Sarabun', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   }
   button:not(:disabled),
   [role="button"]:not([aria-disabled="true"]),
@@ -158,6 +160,140 @@
   .flex {
     min-height: 0;
     min-width: 0;
+  }
+
+  /* Scrabble Game Styles */
+  .scrabble-board {
+    display: grid;
+    grid-template-columns: repeat(15, 1fr);
+    gap: 2px;
+    background-color: oklch(var(--border));
+    padding: 4px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+  }
+
+  .scrabble-cell {
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: oklch(var(--card));
+    border-radius: 2px;
+    font-weight: 600;
+    font-size: 0.875rem;
+    position: relative;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .scrabble-cell:hover:not(.has-letter) {
+    transform: scale(1.05);
+  }
+
+  .scrabble-cell.multiplier-word-3 {
+    background-color: oklch(0.5 0.2 0);
+    color: white;
+  }
+
+  .scrabble-cell.multiplier-word-2 {
+    background-color: oklch(0.7 0.15 350);
+    color: white;
+  }
+
+  .scrabble-cell.multiplier-letter-3 {
+    background-color: oklch(0.5 0.15 240);
+    color: white;
+  }
+
+  .scrabble-cell.multiplier-letter-2 {
+    background-color: oklch(0.7 0.1 200);
+    color: white;
+  }
+
+  .scrabble-cell.center {
+    background-color: oklch(0.7 0.15 350);
+    color: white;
+  }
+
+  .scrabble-tile {
+    background: linear-gradient(145deg, oklch(0.95 0.02 80), oklch(0.88 0.03 80));
+    border: 2px solid oklch(0.7 0.05 80);
+    border-radius: 6px;
+    padding: 0.75rem;
+    font-weight: 700;
+    font-size: 1.25rem;
+    text-align: center;
+    cursor: grab;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: all 0.2s;
+    position: relative;
+    min-width: 3rem;
+    min-height: 3rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .scrabble-tile:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  }
+
+  .scrabble-tile:active {
+    cursor: grabbing;
+  }
+
+  .scrabble-tile .tile-letter {
+    font-size: 1.5rem;
+    line-height: 1;
+    color: oklch(0.2 0.05 80);
+  }
+
+  .scrabble-tile .tile-score {
+    font-size: 0.75rem;
+    position: absolute;
+    bottom: 0.25rem;
+    right: 0.25rem;
+    color: oklch(0.4 0.05 80);
+  }
+
+  .tile-rack {
+    display: flex;
+    gap: 0.5rem;
+    padding: 1rem;
+    background-color: oklch(var(--muted));
+    border-radius: 8px;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  @media (max-width: 768px) {
+    .scrabble-board {
+      gap: 1px;
+      padding: 2px;
+    }
+
+    .scrabble-cell {
+      font-size: 0.625rem;
+    }
+
+    .scrabble-tile {
+      padding: 0.5rem;
+      font-size: 1rem;
+      min-width: 2.5rem;
+      min-height: 2.5rem;
+    }
+
+    .scrabble-tile .tile-letter {
+      font-size: 1.25rem;
+    }
+
+    .scrabble-tile .tile-score {
+      font-size: 0.625rem;
+    }
   }
 
   @media (min-width: 640px) {
