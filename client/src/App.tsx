@@ -11,11 +11,13 @@ import Home from "./pages/Home";
 import Game from "./pages/Game";
 import History from "./pages/History";
 import Shop from "./pages/Shop";
+import Login from "./pages/Login";
 
 function Router() {
   return (
     <Switch>
       <Route path={"/"} component={Home} />
+      <Route path={"/login"} component={Login} />
       <Route path={"/game/guest"} component={Game} />
       <Route path={"/game/:id"} component={Game} />
       <Route path={"/history"} component={History} />

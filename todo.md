@@ -67,3 +67,16 @@
 - [x] เพิ่มปุ่ม "ทดลองเล่นฟรี" ในหน้าแรก
 - [x] สร้าง client-side game logic
 - [ ] ปรับหน้า Game ให้รองรับ Guest Mode อย่างสมบูรณ์ (ต้องทำต่อใน production)
+
+## Migration to Supabase (ฟรี 100%)
+- [x] ติดตั้ง @supabase/supabase-js
+- [x] สร้าง server/supabase.ts
+- [x] แก้ไข server/_core/context.ts ให้ใช้ Supabase
+- [x] สร้าง client/src/lib/supabase.ts
+- [x] แก้ไข client/src/_core/hooks/useAuth.ts ให้ใช้ Supabase
+- [x] สร้างหน้า Login.tsx สำหรับ Supabase OAuth
+- [x] แก้ไข client/src/const.ts (getLoginUrl)
+- [x] เพิ่ม route /login ใน App.tsx
+- [ ] ทดสอบระบบ authentication (ต้องตั้งค่า Supabase ก่อน)
+- [ ] Push ไป GitHub
+- [ ] สร้างคู่มือติดตั้ง Supabase
