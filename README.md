@@ -61,7 +61,7 @@
 ### ข้อกำหนดเบื้องต้น
 - Node.js 22+
 - pnpm 9+
-- MySQL database
+- PostgreSQL database (Supabase)
 
 ### ขั้นตอนการติดตั้ง
 
@@ -80,12 +80,18 @@
    
    สร้างไฟล์ `.env` และเพิ่ม:
    ```bash
-   DATABASE_URL=mysql://...
+   DATABASE_URL=postgresql://...
+   SUPABASE_URL=https://xxx.supabase.co
+   SUPABASE_ANON_KEY=your-anon-key
+   VITE_SUPABASE_URL=https://xxx.supabase.co
+   VITE_SUPABASE_ANON_KEY=your-anon-key
    JWT_SECRET=your-secret-key
    STRIPE_SECRET_KEY=sk_test_...
    STRIPE_WEBHOOK_SECRET=whsec_...
    VITE_STRIPE_PUBLISHABLE_KEY=pk_test_...
    ```
+   
+   **อ่านคู่มือการตั้งค่าแบบละเอียดใน [SUPABASE_SETUP.md](./SUPABASE_SETUP.md)**
 
 4. **Run database migrations**
    ```bash
@@ -164,12 +170,13 @@
 
 ---
 
-## 🐛 ปัญหาที่ทราบ
+## ✅ Authentication System
 
-### ⚠️ OAuth Authentication ไม่ทำงานใน Development
-- **สาเหตุ**: Manus OAuth มีข้อจำกัดใน development environment
-- **วิธีแก้**: Deploy ไป production (Vercel/Netlify) และเปลี่ยนเป็น OAuth provider อื่น
-- **ดูรายละเอียด**: [DEPLOYMENT.md](./DEPLOYMENT.md)
+### Supabase Authentication (ฟรี 100%)
+- ใช้ Supabase สำหรับ authentication และ database
+- รองรับ Google OAuth
+- ฟรีตลอดไป ไม่ต้องใส่บัตรเครดิต
+- **คู่มือติดตั้ง**: [SUPABASE_SETUP.md](./SUPABASE_SETUP.md)
 
 ### 🔄 ฟีเจอร์ที่กำลังพัฒนา
 - **Guest Mode** - เล่นได้โดยไม่ต้องล็อกอิน
