@@ -50,3 +50,20 @@
 - [x] สร้างระบบธีมกระดาน (4 ธีม: default, classic, gold, rainbow)
 - [x] เพิ่มปุ่มเปลี่ยนธีมในเกม
 - [ ] ทดสอบการชำระเงินด้วยบัตรทดสอบ Stripe
+
+## ปัญหาที่พบ
+- [ ] แก้ไขปัญหาเกมไม่พบ (404 Not Found) เมื่อคลิกปุ่ม "เริ่มเล่น"
+- [ ] ตรวจสอบ API endpoints และ routing
+- [ ] ทดสอบการสร้างเกมใหม่
+
+## ปัญหาเร่งด่วน - Cookie และ Session
+- [x] เพิ่มการขอ cookie consent (CookieConsent component)
+- [x] แก้ไขการจัดการ session cookie (เปลี่ยน sameSite เป็น lax)
+- [x] แก้ไข useAuth hook ให้ตรวจสอบ openId อย่างถูกต้อง
+- [ ] ทดสอบการล็อกอินและสร้างเกมใหม่
+
+## Guest Mode (โหมดทดลองเล่น) - กำลังพัฒนา
+- [x] สร้าง GuestGameContext และ GuestGameProvider
+- [x] เพิ่มปุ่ม "ทดลองเล่นฟรี" ในหน้าแรก
+- [x] สร้าง client-side game logic
+- [ ] ปรับหน้า Game ให้รองรับ Guest Mode อย่างสมบูรณ์ (ต้องทำต่อใน production)

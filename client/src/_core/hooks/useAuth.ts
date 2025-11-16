@@ -46,11 +46,13 @@ export function useAuth(options?: UseAuthOptions) {
       "manus-runtime-user-info",
       JSON.stringify(meQuery.data)
     );
+    // Check if user is truly authenticated by verifying openId exists
+    const isAuth = Boolean(meQuery.data && meQuery.data.openId);
     return {
       user: meQuery.data ?? null,
       loading: meQuery.isLoading || logoutMutation.isPending,
       error: meQuery.error ?? logoutMutation.error ?? null,
-      isAuthenticated: Boolean(meQuery.data),
+      isAuthenticated: isAuth,
     };
   }, [
     meQuery.data,

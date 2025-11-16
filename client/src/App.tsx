@@ -5,6 +5,8 @@ import { Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { BoardThemeProvider } from "./contexts/BoardThemeContext";
+import { GuestGameProvider } from "./contexts/GuestGameContext";
+import { CookieConsent } from "./components/CookieConsent";
 import Home from "./pages/Home";
 import Game from "./pages/Game";
 import History from "./pages/History";
@@ -14,6 +16,7 @@ function Router() {
   return (
     <Switch>
       <Route path={"/"} component={Home} />
+      <Route path={"/game/guest"} component={Game} />
       <Route path={"/game/:id"} component={Game} />
       <Route path={"/history"} component={History} />
       <Route path={"/shop"} component={Shop} />
@@ -28,10 +31,13 @@ function App() {
     <ErrorBoundary>
       <ThemeProvider defaultTheme="light">
         <BoardThemeProvider>
-          <TooltipProvider>
-            <Toaster />
-            <Router />
-          </TooltipProvider>
+          <GuestGameProvider>
+            <TooltipProvider>
+              <Toaster />
+              <CookieConsent />
+              <Router />
+            </TooltipProvider>
+          </GuestGameProvider>
         </BoardThemeProvider>
       </ThemeProvider>
     </ErrorBoundary>

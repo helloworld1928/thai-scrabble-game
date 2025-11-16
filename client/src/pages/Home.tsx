@@ -89,9 +89,12 @@ export default function Home() {
               </Card>
             </div>
 
-            <div className="pt-4">
+            <div className="pt-4 flex flex-col sm:flex-row gap-4 justify-center">
               <Button size="lg" asChild>
-                <a href={getLoginUrl()}>เริ่มเล่นเลย</a>
+                <a href={getLoginUrl()}>เข้าสู่ระบบและเล่น</a>
+              </Button>
+              <Button size="lg" variant="outline" asChild>
+                <Link href="/game/guest">ทดลองเล่นฟรี</Link>
               </Button>
             </div>
           </div>

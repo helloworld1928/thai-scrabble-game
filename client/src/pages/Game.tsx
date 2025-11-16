@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useRoute, useLocation } from "wouter";
 import { useAuth } from "@/_core/hooks/useAuth";
+import { useGuestGame } from "@/contexts/GuestGameContext";
 import { trpc } from "@/lib/trpc";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -35,19 +36,23 @@ interface Position {
 
 export default function Game() {
   const { user, loading: authLoading, isAuthenticated } = useAuth();
+  const { gameState: guestGameState, createNewGame: createGuestGame, saveGameState } = useGuestGame();
   const { theme, setTheme, availableThemes, isThemeUnlocked } = useBoardTheme();
   const themeColors = getThemeColors(theme);
   const [, params] = useRoute("/game/:id");
   const [, setLocation] = useLocation();
-  const gameId = params?.id === "new" ? null : Number(params?.id);
+  const isGuestMode = params?.id === "guest";
+  const gameId = isGuestMode ? null : (params?.id === "new" ? null : Number(params?.id));
 
-  // Redirect to home if not authenticated
+  // For guest mode, no authentication required
+  // For regular mode, redirect to home if not authenticated
   useEffect(() => {
+    if (isGuestMode) return; // Skip auth check for guest mode
     if (!authLoading && !isAuthenticated) {
       toast.error("กรุณาเข้าสู่ระบบก่อนเล่นเกม");
       setLocation("/");
     }
-  }, [authLoading, isAuthenticated, setLocation]);
+  }, [authLoading, isAuthenticated, setLocation, isGuestMode]);
 
   const [selectedTiles, setSelectedTiles] = useState<number[]>([]);
   const [placedPositions, setPlacedPositions] = useState<Position[]>([]);
